@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple WebSocket Chat Room</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+        <script src="public/vendor/materialize/js/materialize.min.js"></script>
+        <script src="public/vendor/URI.js"></script>
+        <script src="public/js/chat.js"></script>
+        <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+        <link href="public/vendor/materialize/css/materialize.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="public/css/index.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col s8 offset-s2 teal lighten-5 "  id="chat-wrapper">
+                    <div class="row card-panel teal lighten-2" id="notification">
+                        <div id="notification-content" class=" white-text  col s11">
+                        </div>
+                        <div id="dismiss-btn" class=" col s1">
+                            <i class="material-icons white-text">close</i>
+                        </div>
+                    </div>
+                    <div class="row" id="chat-display">
+                        
+                    </div>
+                    <div class="row" id="input-wrapper">
+                        <input type="text" placeholder="Chat goes here..." id="input-field">
+                        <div>
+                            <a class="btn-floating btn-large waves-effect waves-light red" id="submit-btn"><i class="material-icons">send</i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

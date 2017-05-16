@@ -1,0 +1,20 @@
+#chat-wrapper {
+  position: relative;
+  height: 95vh;
+  display: flex;
+  flex-direction: column; }
+  #chat-wrapper #notification {
+    color: white;
+    position: absolute;
+    top: 0;
+    width: 100%; }
+  #chat-wrapper #chat-display {
+    flex-grow: 1;
+    padding: 0 40px; }
+  #chat-wrapper #input-wrapper {
+    display: flex;
+    padding: 0 40px; }
+    #chat-wrapper #input-wrapper #input-field {
+      margin-right: 20px; }
+
+/*# sourceMappingURL=index.css.map */
