@@ -6,6 +6,7 @@
 package net.anthonypoon.websocket_server;
 
 import com.google.gson.Gson;
+import java.sql.Timestamp;
 
 /**
  *
@@ -17,6 +18,8 @@ public class Message {
         ERROR,
         SYSTEM
     }
+    private Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    private String fromName;
     private Type type = Type.NORMAL;
     private String payload = "";
     public String toJson() {
@@ -39,6 +42,16 @@ public class Message {
     public void setPayload(String payload) {
         this.payload = payload;
     }
-    
-    
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
 }

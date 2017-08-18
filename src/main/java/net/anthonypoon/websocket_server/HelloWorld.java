@@ -1,13 +1,12 @@
 package net.anthonypoon.websocket_server;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -20,36 +19,30 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 @ServerEndpoint("/hello")
 public class HelloWorld {
     private static final Map<String, Session> sessions = Collections.synchronizedMap(new HashMap<String, Session>());
+    private static final Map<String, String> names = Collections.synchronizedMap(new HashMap<String, String>());
     private String name;
     final static Logger logger = Logger.getLogger(HelloWorld.class);
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig conf) {
-        //try {
-            String queryStr = session.getQueryString();
-            Map<String, String> query = parseQueryString(queryStr);
-            if (!query.containsKey("name")) {
-                onError(session, new Exception("Missing name"));
-            } else {
-                name = query.get("name");
-                sessions.put(session.getId(), session);
-                logger.log(Level.INFO, name + " joined. ID = " + session.getId());
-                Message msg = new Message();
-                msg.setPayload(name + " joined the channel.");
-                msg.setType(Message.Type.NORMAL);
-                //boardcast(msg);
-                session.getAsyncRemote().sendText(msg.toJson());
-            }
-
-        //} catch (IOException ex) {
-        //    logger.log(Level.ERROR, ex.getMessage());
-        //}
-
+        String queryStr = session.getQueryString();
+        Map<String, String> query = parseQueryString(queryStr);
+        if (!query.containsKey("name")) {
+            onError(session, new Exception("Missing name"));
+        } else {
+            name = query.get("name");
+            sessions.put(session.getId(), session);
+            names.put(session.getId(), name);
+            logger.log(Level.INFO, name + " joined. ID = " + session.getId());
+            Message msg = new Message();
+            msg.setPayload(name + " joined the channel.");
+            msg.setType(Message.Type.NORMAL);
+            boardcast(msg);
+        }
     }
 
     @OnMessage
@@ -60,6 +53,8 @@ public class HelloWorld {
             }
             logger.log(Level.INFO, payload);
             Message msg = new Message();
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+            msg.setFromName(name);
             msg.setPayload(payload);
             msg.setType(Message.Type.NORMAL);
             boardcast(msg);
@@ -70,7 +65,6 @@ public class HelloWorld {
 
     @OnError
     public void onError(Session session, Throwable t) {
-
         logger.log(Level.ERROR, t.getMessage());
         for (StackTraceElement err : t.getStackTrace()) {
             logger.log(Level.ERROR, err);
@@ -79,19 +73,24 @@ public class HelloWorld {
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
-        try {
-            logger.log(Level.INFO, "Closed (" + reason.getCloseCode() + ") :" + reason.getReasonPhrase());
-            String id = session.getId();
-            synchronized (sessions) {
-                sessions.remove(id);
-            }
-            Message msg = new Message();
-            msg.setType(Message.Type.SYSTEM);
-            msg.setPayload(name + " quitted. Reason: " + reason.getReasonPhrase());
-            boardcast(msg);
-        } catch (IOException ex) {
-            logger.log(Level.ERROR, ex.getMessage());
+        logger.log(Level.INFO, "Closed (" + reason.getCloseCode() + ") :" + reason.getReasonPhrase());
+        String id = session.getId();
+        synchronized (sessions) {
+            sessions.remove(id);
         }
+        Message msg = new Message();
+        msg.setType(Message.Type.SYSTEM);
+        String reasonStr = String.valueOf(reason.getCloseCode().getCode()) + " - " + reason.toString();
+        switch (reason.getCloseCode().getCode()) {
+            case 1001:
+            case 1000:
+                reasonStr = "User disconnected.";
+                break;
+            default:
+                break;
+        }
+        msg.setPayload(name + " quitted. Reason: " + reasonStr);
+        boardcast(msg);
     }
 
     public List<String> getSessionId() {
@@ -99,6 +98,16 @@ public class HelloWorld {
         synchronized (sessions) {
             for (String id : sessions.keySet()) {
                 returnArray.add(id);
+            }
+        }
+        return returnArray;
+    }
+    
+    public List<String> getNames() {
+        List<String> returnArray = new ArrayList();
+        synchronized (names) {
+            for (String name : names.values()) {
+                returnArray.add(name);
             }
         }
         return returnArray;
@@ -124,7 +133,7 @@ public class HelloWorld {
         return returnMap;
     }
 
-    private void boardcast(Message msg) throws IOException {
+    private void boardcast(Message msg){
         synchronized (sessions) {
             for (Session s : sessions.values()) {
                 if (s.isOpen()) {
@@ -143,6 +152,12 @@ public class HelloWorld {
             case "/list-session":
                 Message msg = new Message();
                 msg.setPayload(StringUtils.join(getSessionId(), ", "));
+                msg.setType(Message.Type.SYSTEM);
+                boardcast(msg);
+                break;
+            case "/list-name":
+                msg = new Message();
+                msg.setPayload(StringUtils.join(getNames(), ", "));
                 msg.setType(Message.Type.SYSTEM);
                 boardcast(msg);
                 break;

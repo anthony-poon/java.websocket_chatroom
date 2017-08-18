@@ -1,4 +1,4 @@
-net\anthonypoon\websocket_server\HelloWorld.class
-net\anthonypoon\websocket_server\Message.class
-net\anthonypoon\websocket_server\Message$Type.class
-net\anthonypoon\websocket_server\Test.class
+net/anthonypoon/websocket_server/Test.class
+net/anthonypoon/websocket_server/Message.class
+net/anthonypoon/websocket_server/HelloWorld.class
+net/anthonypoon/websocket_server/Message$Type.class

@@ -1,8 +1,12 @@
+body > .row {
+  margin-bottom: 0px; }
+
 #chat-wrapper {
   position: relative;
-  height: 95vh;
+  height: 100vh;
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  padding: 0; }
   #chat-wrapper #notification {
     color: white;
     position: absolute;
@@ -10,10 +14,15 @@
     width: 100%; }
   #chat-wrapper #chat-display {
     flex-grow: 1;
-    padding: 0 40px; }
+    padding: 0 40px;
+    overflow-y: scroll;
+    width: 100%; }
+    #chat-wrapper #chat-display .row {
+      margin: 4px 0; }
   #chat-wrapper #input-wrapper {
     display: flex;
-    padding: 0 40px; }
+    padding: 0 40px;
+    width: 100%; }
     #chat-wrapper #input-wrapper #input-field {
       margin-right: 20px; }
 
